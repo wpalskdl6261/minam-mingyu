@@ -1171,7 +1171,7 @@
         const CLOUD_DB_BASE = "https://kvdb.io/PCHp7wPjR9ZfM889X8kYxU/cy_rank_";
         const RANKING_TABS = ['10', '30', '50'];
         const RANKING_STORAGE_KEY = "cy_local_rankings";
-        const MAX_RANKING_ITEMS = 50;
+        const MAX_RANKING_ITEMS = 10;
 
         function createEmptyRankings() {
             return { "10": [], "30": [], "50": [] };
@@ -1263,8 +1263,7 @@
         async function loadCloudRankings(category) {
             const response = await fetchWithTimeout(CLOUD_DB_BASE + category, {
                 method: 'GET',
-                cache: 'no-store',
-                headers: { 'Accept': 'application/json' }
+                cache: 'no-store'
             });
 
             if (response.status === 404) return [];
@@ -1274,19 +1273,30 @@
 
             const text = await response.text();
             if (!text.trim()) return [];
-            return normalizeRankingList(JSON.parse(text));
+            try {
+                const parsed = JSON.parse(text);
+                return normalizeRankingList(Array.isArray(parsed) ? parsed : []);
+            } catch (e) {
+                console.warn('클라우드 랭킹 JSON 파싱 실패:', e, text);
+                return [];
+            }
         }
 
         async function saveCloudRankings(category, dataList) {
+            const payload = JSON.stringify(sortAndLimitRankings(dataList));
+            console.log(`[랭킹 저장] 카테고리: ${category}, 데이터 수: ${sortAndLimitRankings(dataList).length}`, payload);
             const response = await fetchWithTimeout(CLOUD_DB_BASE + category, {
-                method: 'POST',
-                headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
-                body: JSON.stringify(sortAndLimitRankings(dataList))
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: payload
             });
 
             if (!response.ok) {
+                const errText = await response.text().catch(() => '');
+                console.error(`[랭킹 저장 실패] status: ${response.status}, body: ${errText}`);
                 throw new Error(`랭킹 저장 실패: ${response.status}`);
             }
+            console.log(`[랭킹 저장 성공] 카테고리: ${category}`);
         }
 
         // 로컬 랭킹 백업 데이터 로드

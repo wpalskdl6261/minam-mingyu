@@ -449,7 +449,7 @@
                 명예의 전당 실시간 랭킹에 이름을 남겨보세요!
             </p>
             <input type="text" id="record-player-name" placeholder="예: 5학년 1반 이민혁" class="w-full bg-slate-50 border-2 border-amber-300 rounded-xl p-3 text-center text-sm font-bold focus:outline-none focus:ring-amber-400 focus:border-amber-400">
-            <button onclick="submitNewRecord()" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold py-3 rounded-xl shadow-md border border-orange-700 hover:opacity-90 transition">
+            <button id="record-submit-btn" onclick="submitNewRecord()" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 text-white font-bold py-3 rounded-xl shadow-md border border-orange-700 hover:opacity-90 transition">
                 실시간 랭킹 등록하기
             </button>
         </div>
@@ -1169,56 +1169,176 @@
         let isOnlineDatabaseWorking = false;
         // 무료 공개형 API를 활용한 공유형 데이터베이스 키값 설정 (춘양초만의 고유 식별 주소 사용)
         const CLOUD_DB_BASE = "https://kvdb.io/PCHp7wPjR9ZfM889X8kYxU/cy_rank_";
+        const RANKING_TABS = ['10', '30', '50'];
+        const RANKING_STORAGE_KEY = "cy_local_rankings";
+        const MAX_RANKING_ITEMS = 50;
+
+        function createEmptyRankings() {
+            return { "10": [], "30": [], "50": [] };
+        }
+
+        function getTodayString() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const date = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${date}`;
+        }
+
+        function createRecordId() {
+            if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+                return window.crypto.randomUUID();
+            }
+            return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+        }
+
+        function normalizeRankingList(dataList) {
+            if (!Array.isArray(dataList)) return [];
+
+            return dataList.map(item => {
+                const safeItem = item || {};
+                const rawName = typeof safeItem.name === 'string' ? safeItem.name.trim() : '';
+                const score = Number(safeItem.score);
+                const date = typeof safeItem.date === 'string' && safeItem.date.trim() ? safeItem.date.trim() : getTodayString();
+                const id = typeof safeItem.id === 'string' && safeItem.id.trim()
+                    ? safeItem.id.trim()
+                    : `${rawName}|${score}|${date}`;
+                const createdAt = typeof safeItem.createdAt === 'string' && safeItem.createdAt.trim()
+                    ? safeItem.createdAt.trim()
+                    : date;
+
+                return {
+                    id,
+                    name: rawName.slice(0, 24),
+                    score,
+                    date,
+                    createdAt
+                };
+            }).filter(item => item.name && Number.isFinite(item.score));
+        }
+
+        function sortAndLimitRankings(dataList) {
+            return normalizeRankingList(dataList)
+                .sort((a, b) => {
+                    if (b.score !== a.score) return b.score - a.score;
+                    return String(b.createdAt).localeCompare(String(a.createdAt));
+                })
+                .slice(0, MAX_RANKING_ITEMS);
+        }
+
+        function mergeRankingLists(...rankingLists) {
+            const merged = new Map();
+            rankingLists.flat().forEach(item => {
+                const normalized = normalizeRankingList([item])[0];
+                if (!normalized) return;
+                const previous = merged.get(normalized.id);
+                if (!previous || normalized.score > previous.score) {
+                    merged.set(normalized.id, normalized);
+                }
+            });
+            return sortAndLimitRankings([...merged.values()]);
+        }
+
+        function setRankingConnectionStatus(isOnline) {
+            const statusLabel = document.getElementById('network-status-label');
+            if (!statusLabel) return;
+
+            if (isOnline) {
+                statusLabel.innerHTML = "<span class='text-emerald-600 font-bold'>📡 실시간 교내 전체 랭킹이 연결되어 작동합니다.</span>";
+            } else {
+                statusLabel.innerHTML = "<span class='text-amber-600 font-bold'>🔒 오프라인 모드 작동 중 (교내 방화벽 보호 또는 미연결 상태)</span>";
+            }
+        }
+
+        async function fetchWithTimeout(url, options = {}) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), FIREWALL_TIMEOUT);
+            try {
+                return await fetch(url, { ...options, signal: controller.signal });
+            } finally {
+                clearTimeout(timeoutId);
+            }
+        }
+
+        async function loadCloudRankings(category) {
+            const response = await fetchWithTimeout(CLOUD_DB_BASE + category, {
+                method: 'GET',
+                cache: 'no-store',
+                headers: { 'Accept': 'application/json' }
+            });
+
+            if (response.status === 404) return [];
+            if (!response.ok) {
+                throw new Error(`랭킹 불러오기 실패: ${response.status}`);
+            }
+
+            const text = await response.text();
+            if (!text.trim()) return [];
+            return normalizeRankingList(JSON.parse(text));
+        }
+
+        async function saveCloudRankings(category, dataList) {
+            const response = await fetchWithTimeout(CLOUD_DB_BASE + category, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+                body: JSON.stringify(sortAndLimitRankings(dataList))
+            });
+
+            if (!response.ok) {
+                throw new Error(`랭킹 저장 실패: ${response.status}`);
+            }
+        }
 
         // 로컬 랭킹 백업 데이터 로드
         function getLocalRankings() {
-            let ranks = localStorage.getItem("cy_local_rankings");
-            if (!ranks) {
-                // 초기 데모용 더미 데이터 탑재 (작은 점수 체계에 맞게 100~1000점대 현실적 점수로 수정)
-                ranks = {
-                    "10": [
-                        { name: "6-1 최민규", score: 260, date: "2026-05-25" },
-                        { name: "5-2 이영희", score: 185, date: "2026-05-26" }
-                    ],
-                    "30": [
-                        { name: "6-2 박철수", score: 780, date: "2026-05-25" }
-                    ],
-                    "50": [
-                        { name: "6-1 최민규", score: 1450, date: "2026-05-27" }
-                    ]
-                };
-                localStorage.setItem("cy_local_rankings", JSON.stringify(ranks));
-            } else {
-                ranks = JSON.parse(ranks);
+            let ranks = createEmptyRankings();
+            const savedRanks = localStorage.getItem(RANKING_STORAGE_KEY);
+
+            if (savedRanks) {
+                try {
+                    ranks = { ...ranks, ...JSON.parse(savedRanks) };
+                } catch (error) {
+                    console.warn("로컬 랭킹을 읽지 못해 빈 랭킹으로 시작합니다.", error);
+                }
             }
+
+            RANKING_TABS.forEach(tab => {
+                ranks[tab] = sortAndLimitRankings(ranks[tab] || []);
+            });
             return ranks;
         }
 
         function saveLocalRankings(ranks) {
-            localStorage.setItem("cy_local_rankings", JSON.stringify(ranks));
+            const normalized = createEmptyRankings();
+            RANKING_TABS.forEach(tab => {
+                normalized[tab] = sortAndLimitRankings(ranks[tab] || []);
+            });
+            localStorage.setItem(RANKING_STORAGE_KEY, JSON.stringify(normalized));
         }
 
         // 네트워크 상태를 미리 가볍게 체크하고 비동기적 백업 로드 준비
-        function detectNetworkAndPreloadRankings() {
-            const testUrl = CLOUD_DB_BASE + "check";
+        async function detectNetworkAndPreloadRankings() {
+            const testUrl = CLOUD_DB_BASE + "10";
             const statusLabel = document.getElementById('network-status-label');
             
             statusLabel.innerText = "🔌 교내 방화벽 상태 진단 중...";
-            
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), FIREWALL_TIMEOUT);
-            
-            fetch(testUrl, { method: 'GET', signal: controller.signal })
-                .then(() => {
-                    clearTimeout(timeoutId);
-                    isOnlineDatabaseWorking = true;
-                    statusLabel.innerHTML = "<span class='text-emerald-600 font-bold'>📡 실시간 교내 전체 랭킹이 연결되어 작동합니다.</span>";
-                })
-                .catch(() => {
-                    clearTimeout(timeoutId);
-                    isOnlineDatabaseWorking = false;
-                    statusLabel.innerHTML = "<span class='text-amber-600 font-bold'>🔒 오프라인 모드 작동 중 (교내 방화벽 보호 또는 미연결 상태)</span>";
+
+            try {
+                const response = await fetchWithTimeout(testUrl, {
+                    method: 'GET',
+                    cache: 'no-store'
                 });
+
+                if (!response.ok && response.status !== 404) {
+                    throw new Error(`네트워크 확인 실패: ${response.status}`);
+                }
+
+                isOnlineDatabaseWorking = true;
+                setRankingConnectionStatus(true);
+            } catch (error) {
+                isOnlineDatabaseWorking = false;
+                setRankingConnectionStatus(false);
+            }
         }
 
         function openRankingModal() {
@@ -1244,36 +1364,24 @@
             loadAndRenderRankings();
         }
 
-        function loadAndRenderRankings() {
+        async function loadAndRenderRankings() {
             const tableBody = document.getElementById('ranking-table-body');
             tableBody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-slate-400">데이터를 실시간 동기화 중입니다...</td></tr>';
 
             const localRankData = getLocalRankings();
-            
-            if (!isOnlineDatabaseWorking) {
-                // 방화벽 차단 시 로컬 데이터 즉시 렌더링
+
+            try {
+                const cloudData = await loadCloudRankings(activeRankingTab);
+                isOnlineDatabaseWorking = true;
+                setRankingConnectionStatus(true);
+                localRankData[activeRankingTab] = sortAndLimitRankings(cloudData);
+                saveLocalRankings(localRankData);
+                renderRankTable(cloudData);
+            } catch (error) {
+                isOnlineDatabaseWorking = false;
+                setRankingConnectionStatus(false);
                 renderRankTable(localRankData[activeRankingTab] || []);
-                return;
             }
-
-            // 클라우드 데이터 가져오기
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), FIREWALL_TIMEOUT);
-
-            fetch(CLOUD_DB_BASE + activeRankingTab, { signal: controller.signal })
-                .then(res => res.json())
-                .then(cloudData => {
-                    clearTimeout(timeoutId);
-                    // 클라우드 데이터를 로컬에 동기화 백업
-                    localRankData[activeRankingTab] = cloudData;
-                    saveLocalRankings(localRankData);
-                    renderRankTable(cloudData);
-                })
-                .catch(() => {
-                    // 예외 시 로컬 백업 자동 출력
-                    clearTimeout(timeoutId);
-                    renderRankTable(localRankData[activeRankingTab] || []);
-                });
         }
 
         function renderRankTable(dataList) {
@@ -1286,7 +1394,11 @@
             }
 
             // 점수순 정렬
-            const sorted = [...dataList].sort((a, b) => b.score - a.score).slice(0, 50); // 상위 50명 한정
+            const sorted = sortAndLimitRankings(dataList);
+            if (sorted.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-slate-400">아직 등록된 영광의 도전 기록이 없습니다!</td></tr>';
+                return;
+            }
 
             sorted.forEach((item, idx) => {
                 const row = document.createElement('tr');
@@ -1301,7 +1413,7 @@
                     <td class="py-2.5 font-bold text-slate-600">${medal}</td>
                     <td class="font-bold text-slate-900">${escapeHtml(item.name)}</td>
                     <td class="text-right font-extrabold text-emerald-800 font-gamja">${item.score.toLocaleString()}점</td>
-                    <td class="text-right text-slate-400 text-[10px]">${item.date}</td>
+                    <td class="text-right text-slate-400 text-[10px]">${escapeHtml(item.date)}</td>
                 `;
                 tableBody.appendChild(row);
             });
@@ -1313,18 +1425,27 @@
             document.getElementById('modal-record-save').classList.remove('hidden');
         }
 
-        function submitNewRecord() {
-            const nameInput = document.getElementById('record-player-name').value.trim();
+        async function submitNewRecord() {
+            const nameInput = document.getElementById('record-player-name').value.trim().slice(0, 24);
             if (!nameInput) {
                 showCustomAlert("앗! 이름 미입력", "학반과 이름을 꼭 적어주세요!\n(예: 5학년 2반 김민규)", "🟡");
                 return;
             }
 
-            const today = new Date().toISOString().split('T')[0];
+            const submitButton = document.getElementById('record-submit-btn');
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.innerText = "랭킹 등록 중...";
+                submitButton.classList.add('opacity-70', 'cursor-wait');
+            }
+
+            const today = getTodayString();
             const newRecord = {
+                id: createRecordId(),
                 name: nameInput,
                 score: gbScore,
-                date: today
+                date: today,
+                createdAt: new Date().toISOString()
             };
 
             const localRankData = getLocalRankings();
@@ -1335,38 +1456,37 @@
             saveLocalRankings(localRankData);
 
             // 클라우드 업로드 시도
-            if (isOnlineDatabaseWorking) {
-                const uploadData = localRankData[maxQuestionsCount];
-                fetch(CLOUD_DB_BASE + maxQuestionsCount, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(uploadData)
-                })
-                .then(() => {
-                    document.getElementById('modal-record-save').classList.add('hidden');
-                    showCustomAlert("축하합니다! 🎉", "실시간 명예의 전당 보드에 명단이 온전히 등록되었습니다!", "🟢", "랭킹 확인하러 가기", () => {
-                        goHome();
-                        openRankingModal();
-                        switchRankingTab(maxQuestionsCount.toString());
-                    });
-                })
-                .catch(() => {
-                    // 클라우드 실패 시 로컬 등록만 유효 알림
-                    document.getElementById('modal-record-save').classList.add('hidden');
-                    showCustomAlert("오프라인 등록 완료! 💾", "방화벽 차단 상태여서 이 컴퓨터 태블릿 내부에 랭킹이 저장되었습니다!", "🟡", "확인", () => {
-                        goHome();
-                        openRankingModal();
-                        switchRankingTab(maxQuestionsCount.toString());
-                    });
-                });
-            } else {
-                // 다이렉트 오프라인 조치
+            try {
+                const category = maxQuestionsCount.toString();
+                const cloudData = await loadCloudRankings(category);
+                const mergedData = mergeRankingLists(cloudData, localRankData[category], [newRecord]);
+                localRankData[category] = mergedData;
+                saveLocalRankings(localRankData);
+                await saveCloudRankings(category, mergedData);
+
+                isOnlineDatabaseWorking = true;
+                setRankingConnectionStatus(true);
                 document.getElementById('modal-record-save').classList.add('hidden');
-                showCustomAlert("오프라인 등록 완료! 💾", "이 태블릿 기기 내부에 점수가 안전히 등록되었습니다!", "🟢", "확인", () => {
+                showCustomAlert("축하합니다! 🎉", "실시간 명예의 전당 보드에 명단이 온전히 등록되었습니다!", "🟢", "랭킹 확인하러 가기", () => {
+                    goHome();
+                    openRankingModal();
+                    switchRankingTab(category);
+                });
+            } catch (error) {
+                isOnlineDatabaseWorking = false;
+                setRankingConnectionStatus(false);
+                document.getElementById('modal-record-save').classList.add('hidden');
+                showCustomAlert("오프라인 등록 완료! 💾", "네트워크 상태 때문에 이 기기 내부에 먼저 저장했습니다. 다시 연결되면 다음 등록 때 함께 동기화됩니다.", "🟡", "확인", () => {
                     goHome();
                     openRankingModal();
                     switchRankingTab(maxQuestionsCount.toString());
                 });
+            } finally {
+                if (submitButton) {
+                    submitButton.disabled = false;
+                    submitButton.innerText = "실시간 랭킹 등록하기";
+                    submitButton.classList.remove('opacity-70', 'cursor-wait');
+                }
             }
         }
 

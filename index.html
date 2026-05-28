@@ -235,6 +235,7 @@
                     <span class="bg-teal-600 text-white font-bold px-3 py-1 rounded-full text-xs md:text-sm">연습장 모드</span>
                     <select id="practice-category-select" onchange="filterPracticeQuestions()" class="bg-stone-100 border border-stone-300 text-slate-800 text-xs rounded-lg p-2 focus:ring-emerald-500">
                         <option value="ALL">모든 카테고리 전체보기</option>
+                        <option value="EASY">👶 저학년용 (1~2학년) 기초 문제</option>
                         <option value="영양소">5대 영양소와 식품군</option>
                         <option value="식습관">건강한 식습관과 비만 예방</option>
                         <option value="소비기한">식품 안전 및 라벨 표시제</option>
@@ -295,9 +296,9 @@
                         <h3 class="text-xl font-bold font-gamja text-slate-900">식생활 100선 완전 대사전</h3>
                         <p class="text-xs text-slate-500">인쇄하거나 검색하여 나만의 워크시트로 활용해보세요.</p>
                     </div>
-                    <div class="flex gap-2 w-full md:w-auto">
+                    <div class="flex gap-2 w-full md:w-auto mt-2 md:mt-0">
                         <input type="text" id="dict-search-input" oninput="searchDict()" placeholder="질문 또는 단어 검색..." class="bg-slate-50 border border-slate-300 rounded-xl px-4 py-2 text-xs flex-grow focus:ring-emerald-500 focus:border-emerald-500">
-                        <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex-shrink-0 transition">
+                        <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-2 rounded-xl text-xs flex-shrink-0 whitespace-nowrap transition">
                             🖨️ 인쇄/PDF 저장
                         </button>
                     </div>
@@ -571,7 +572,7 @@
             { id: 97, category: "환경", question: "오랜 시간 숙성될수록 유익한 유산균과 단백질이 증가하고 항암 가치가 늘어나는 한국의 김치, 된장 등을 통칭하는 훌륭한 조리 방식은?", options: ["발효 식품 문화", "정제 인스턴트", "초가공 식품", "날것 문화"], answer: 0, explanation: "미생물의 착한 분해 활성 능력인 발효는 영양소 흡수를 늘리고 독소를 정화합니다." },
             { id: 98, category: "환경", question: "다음 중 가공 시 포장 폐기물 비닐 플라스틱 쓰레기가 지나치게 배출되지 않는 착한 유기농 간식은?", options: ["껍질째 먹는 유기농 제철 과일", "삼중 포장 초콜릿 과자", "배달 패스트푸드 햄버거", "일회용 컵 스무디"], answer: 0, explanation: "자연 포장재인 껍질만 남기고 흙으로 스며드는 천연 사과나 귤 등은 폐기물 탄소가 전혀 없습니다." },
             { id: 99, category: "환경", question: "식료품 쇼핑을 하실 때 비닐봉지를 계속 사서 자원 탄소를 낭비하는 대신 들고 다녀야 할 착한 다회용 장바구니 에코 가방은?", options: ["종이 백", "에코백 (천 가방)", "일회용 검정 비닐봉투", "비닐 랩"], answer: 1, explanation: "한 개의 에코 장바구니 장기 사용은 수천 장의 가공 비닐 탄소를 매몰하는 영웅의 발걸음입니다." },
-            { id: 100, category: "환경", question: "우리 춘양초 어린이들이 학교 급식을 받을 때 먹을 수 있을 만큼만 식판에 알맞게 정량 배급을 받아 남기지 않고 싹 비우면 지구 기온 상승 속도를 늦출 수 있는 과학적 이유는 무엇일까요?", options: ["음식 폐기물의 썩는 과정에서 메탄가스와 탄소 배출이 대폭 억제되어 기후 이상 온난화를 지킬 수 있기 때문", "식판 무게가 무거워져서", "급식 도우미 이모님이 슬퍼져서", "식수 시설 소독이 불필요해져서"], answer: 0, explanation: "음식 쓰레기가 지구 온실가스(메탄) 생산의 주력 원인인 만큼, 싹 비우기 행동이야말로 확실한 지구 지킴이 실천입니다." }
+            { id: 100, category: "환경", question: "우리 춘양초 어린이들이 학교 급식을 받을 때 먹을 수 있을 만큼만 식판에 알맞게 정량 배급을 받아 남기지 않고 싹 비우면 지구 기온 상승 속도를 늦출 수 있는 과학적 이유는 무엇일까요?", options: ["음식 폐기물의 썩는 과정에서 메탄가스와 탄소 배출이 대폭 억제되어 기후 이상 온난화를 지킬 수 있기 때문", "식판 무게가 무거워져서", "조리사님이 슬퍼져서", "식수 시설 소독이 불필요해져서"], answer: 0, explanation: "음식 쓰레기가 지구 온실가스(메탄) 생산의 주력 원인인 만큼, 싹 비우기 행동이야말로 확실한 지구 지킴이 실천입니다." }
         ];
 
         /* 글로벌 상태 변수 */
@@ -979,6 +980,10 @@
             const cat = document.getElementById('practice-category-select').value;
             if (cat === "ALL") {
                 prQuestionsList = [...gbQuestions];
+            } else if (cat === "EASY") {
+                // 초등 1~2학년 수준의 기초 문제 20개 발췌
+                const easyIds = [1, 2, 3, 4, 5, 21, 22, 23, 24, 41, 42, 43, 61, 62, 63, 81, 82, 83, 98, 100];
+                prQuestionsList = gbQuestions.filter(q => easyIds.includes(q.id));
             } else {
                 prQuestionsList = gbQuestions.filter(q => q.category === cat);
             }
@@ -1400,9 +1405,11 @@
                 const cloudData = await loadCloudRankings(activeRankingTab);
                 isOnlineDatabaseWorking = true;
                 setRankingConnectionStatus(true);
-                localRankData[activeRankingTab] = sortAndLimitRankings(cloudData);
+                // 서버 데이터와 로컬 데이터를 병합하여 로컬 오프라인 데이터 증발 방지
+                const merged = mergeRankingLists(cloudData, localRankData[activeRankingTab] || []);
+                localRankData[activeRankingTab] = merged;
                 saveLocalRankings(localRankData);
-                renderRankTable(cloudData);
+                renderRankTable(merged);
             } catch (error) {
                 isOnlineDatabaseWorking = false;
                 setRankingConnectionStatus(false);

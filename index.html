@@ -144,13 +144,18 @@
                 🏆 골든벨 도전 난이도 선택
             </h3>
             <p class="text-slate-600 text-sm">
-                도전하고 싶은 문항 수를 골라보세요! 완벽하게 다 맞히면 영광스러운 실시간 명예의 전당 보드에 나의 이름과 클래스가 남겨집니다.
+                도전하고 싶은 문항 수를 골라보세요! 모두 맞히면 실시간 명예의 전당 보드에 나의 이름과 학년/반이 남겨집니다.
             </p>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <button onclick="startGoldenbell(10)" class="bg-gradient-to-br from-teal-50 to-emerald-100 border-2 border-emerald-500 hover:bg-emerald-200 p-5 rounded-2xl text-center transition">
                     <span class="text-3xl block mb-2">🌱</span>
                     <span class="font-bold text-lg text-emerald-950">미니 도전 (10선)</span>
                     <p class="text-xs text-emerald-800 mt-2">간단히 10문제만 신속하게 풀어보는 기초 단계입니다.</p>
+                </button>
+                <button onclick="startGoldenbell(20)" class="bg-gradient-to-br from-sky-50 to-blue-100 border-2 border-blue-500 hover:bg-blue-200 p-5 rounded-2xl text-center transition">
+                    <span class="text-3xl block mb-2">👶</span>
+                    <span class="font-bold text-lg text-blue-950">새싹 도전 (20선)</span>
+                    <p class="text-xs text-blue-800 mt-2">초등 1~2학년 친구들을 위한 쉬운 난이도의 20문제 코스입니다.</p>
                 </button>
                 <button onclick="startGoldenbell(30)" class="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-500 hover:bg-amber-200 p-5 rounded-2xl text-center transition">
                     <span class="text-3xl block mb-2">🔥</span>
@@ -232,7 +237,7 @@
             <!-- 필터 및 제어 헤더 -->
             <div class="bg-white p-4 rounded-2xl shadow-sm border border-emerald-100 flex flex-col md:flex-row justify-between items-center gap-3">
                 <div class="flex items-center gap-2">
-                    <span class="bg-teal-600 text-white font-bold px-3 py-1 rounded-full text-xs md:text-sm">연습장 모드</span>
+                    <span class="bg-teal-600 text-white font-bold px-3 py-1 rounded-full text-xs md:text-sm whitespace-nowrap flex-shrink-0">연습장 모드</span>
                     <select id="practice-category-select" onchange="filterPracticeQuestions()" class="bg-stone-100 border border-stone-300 text-slate-800 text-xs rounded-lg p-2 focus:ring-emerald-500">
                         <option value="ALL">모든 카테고리 전체보기</option>
                         <option value="EASY">👶 저학년용 (1~2학년) 기초 문제</option>
@@ -389,10 +394,11 @@
             </div>
 
             <!-- 랭킹 부문 선택 탭 -->
-            <div class="grid grid-cols-3 gap-1 bg-slate-100 p-1 rounded-xl">
-                <button id="tab-rank-10" onclick="switchRankingTab('10')" class="py-2 text-xs font-bold rounded-lg transition text-slate-700 bg-white shadow-sm">미니 10선</button>
-                <button id="tab-rank-30" onclick="switchRankingTab('30')" class="py-2 text-xs font-bold rounded-lg transition text-slate-500 hover:bg-slate-200">마스터 30선</button>
-                <button id="tab-rank-50" onclick="switchRankingTab('50')" class="py-2 text-xs font-bold rounded-lg transition text-slate-500 hover:bg-slate-200">신화 50선</button>
+            <div class="grid grid-cols-4 gap-1 bg-slate-100 p-1 rounded-xl">
+                <button id="tab-rank-10" onclick="switchRankingTab('10')" class="py-2 text-[10px] sm:text-xs font-bold rounded-lg transition text-slate-700 bg-white shadow-sm">미니 10선</button>
+                <button id="tab-rank-20" onclick="switchRankingTab('20')" class="py-2 text-[10px] sm:text-xs font-bold rounded-lg transition text-slate-500 hover:bg-slate-200">새싹 20선</button>
+                <button id="tab-rank-30" onclick="switchRankingTab('30')" class="py-2 text-[10px] sm:text-xs font-bold rounded-lg transition text-slate-500 hover:bg-slate-200">마스터 30선</button>
+                <button id="tab-rank-50" onclick="switchRankingTab('50')" class="py-2 text-[10px] sm:text-xs font-bold rounded-lg transition text-slate-500 hover:bg-slate-200">신화 50선</button>
             </div>
 
             <!-- 랭킹 테이블 영역 -->
@@ -478,7 +484,7 @@
             { id: 11, category: "영양소", question: "키가 크기 위해 하루에 마시는 것이 권장되는 대표적인 하얀색 칼슘 음료는?", options: ["탄산음료", "우유", "커피", "이온음료"], answer: 1, explanation: "우유는 흡수율이 아주 높은 우수한 칼슘 급원입니다." },
             { id: 12, category: "영양소", question: "다음 중 단백질 식품군에 속하지 않는 식품은 무엇일까요?", options: ["닭고기", "달걀", "두부", "버터"], answer: 3, explanation: "버터는 대부분 유지류(지방)로 이루어진 식품입니다." },
             { id: 13, category: "영양소", question: "식품 구성 자전거 바퀴에서 가장 큰 면적을 차지하여 매일 충분히 마셔야 함을 뜻하는 것은?", options: ["과일주스", "보리차(물)", "우유", "탄산수"], answer: 1, explanation: "물은 인체 신진대사를 유지하는 바탕이 됩니다." },
-            { id: 14, category: "영양소", question: "우리 몸에서 비타민 C가 부족하면 잇몸에서 피가 나는 무슨 병에 걸릴 수 있을까요?", options: ["괴혈병", "구루병", "각기병", "골다공증"], answer: 0, explanation: "비타민C가 오랜 시간 극도로 결핍되면 괴혈병이 올 수 있습니다." },
+            { id: 14, category: "영양소", question: "우리 몸에서 비타민 C가 많이 부족하면 잇몸에서 피가 나는 어떤 병에 걸릴 수 있을까요?", options: ["괴혈병", "구루병", "각기병", "골다공증"], answer: 0, explanation: "비타민C가 오랫동안 부족하면 괴혈병이 생길 수 있습니다." },
             { id: 15, category: "영양소", question: "소금의 주성분이며, 우리 몸에 꼭 필요하지만 너무 많이 먹으면 고혈압을 일으키는 물질은?", options: ["칼슘", "아연", "나트륨", "철분"], answer: 2, explanation: "과도한 나트륨 섭취는 신장에 부담을 주어 혈압을 높입니다." },
             { id: 16, category: "영양소", question: "다음 중 전통 발효음식 '콩'으로 만들며, 밭에서 나는 고기라 불릴 만큼 단백질이 가득한 재료는?", options: ["두부", "감자", "밀가루", "쌀밥"], answer: 0, explanation: "두부는 단백질 함량이 매우 뛰어난 영양 식품입니다." },
             { id: 17, category: "영양소", question: "밀가루 음식을 많이 먹으면 속이 더부룩한 원인이 될 수 있는 보리와 밀 속의 단백질 성분은?", options: ["글루텐", "카제인", "레시틴", "지방산"], answer: 0, explanation: "글루텐은 밀가루를 쫄깃하게 만들지만 소화 장애를 일으키기도 합니다." },
@@ -496,16 +502,16 @@
             { id: 27, category: "식습관", question: "가공식품에 단맛을 내기 위해 넣는 성분으로, 과잉 섭취 시 소아비만과 당뇨를 유발하는 주범은?", options: ["식이섬유", "밀가루", "단순 당류", "천일염"], answer: 2, explanation: "설탕이나 액상과당 같은 첨가당은 급격히 혈당을 올립니다." },
             { id: 28, category: "식습관", question: "하루 동안 필요한 칼로리보다 훨씬 많은 양의 음식을 습관적으로 먹어 몸에 지방이 과도하게 쌓인 상태는?", options: ["체력왕", "비만", "저체중", "정상체중"], answer: 1, explanation: "섭취 열량이 소비 열량보다 많으면 비만이 나타납니다." },
             { id: 29, category: "식습관", question: "세계보건기구(WHO)에서 정한 어린이가 하루에 섭취해야 할 소금(나트륨) 제한 권장량은 몇 g 미만?", options: ["5g 미만", "15g", "30g", "50g"], answer: 0, explanation: "나트륨은 하루 약 2,000mg(소금 5g 분량) 이하로 제한하는 것이 현명합니다." },
-            { id: 30, category: "식습관", question: "다음 중 가공 가혹식품 중 혈관을 막는 위험한 트랜스지방이 가장 많이 들어있는 간식은?", options: ["찐감자", "사과", "감자칩/도넛", "삶은 달걀"], answer: 2, explanation: "튀긴 과자나 도넛, 패스트푸드 쇼트닝에 트랜스지방이 많습니다." },
+            { id: 30, category: "식습관", question: "다음 중 트랜스지방을 많이 섭취하기 쉬운 간식은?", options: ["찐감자", "사과", "감자칩/도넛", "삶은 달걀"], answer: 2, explanation: "튀긴 과자나 도넛에는 트랜스지방과 포화지방이 많을 수 있어 자주 먹지 않는 것이 좋습니다." },
             { id: 31, category: "식습관", question: "밥을 먹을 때 소화를 돕고 영양을 잘 흡수시키기 위해 가장 지켜야 할 기본 수칙은?", options: ["서서 빨리 먹기", "자세를 바르게 하고 천천히 꼭꼭 씹어 먹기", "짜고 매운 찌개를 많이 먹기", "삼키자마자 바로 눕기"], answer: 1, explanation: "올바른 자세와 저작 운동은 위장의 부담을 획기적으로 줄여줍니다." },
             { id: 32, category: "식습관", question: "채소나 과일을 껍질째 섭취할 때 얻을 수 있는 대표적인 몸에 좋은 천연 섬유소의 효과는?", options: ["변비를 없애고 소화를 돕는다", "치아가 약해진다", "지방이 몸에 빨리 쌓인다", "피부가 어두워진다"], answer: 0, explanation: "껍질에는 풍부한 섬유소와 항산화 비타민이 밀집되어 있습니다." },
             { id: 33, category: "식습관", question: "늦은 밤 잠들기 전 기름진 음식을 많이 먹는 습관이 식도와 위장에 유발하는 나쁜 질병은?", options: ["중이염", "역류성 식도염", "시력 약화", "두통"], answer: 1, explanation: "밤에 먹고 바로 누우면 강한 위산이 역류하여 식도를 다치게 합니다." },
-            { id: 34, category: "식습관", question: "다음 중 단맛과 짠맛의 불균형을 극대화해 비만을 유도하는 현대의 유행어는?", options: ["단짠단짠", "밀당밀당", "매콤새콤", "슴슴슴슴"], answer: 0, explanation: "달고 짠 자극적 음식을 반복해서 교대로 먹으면 뇌의 자극 중추가 마비되어 과식합니다." },
+            { id: 34, category: "식습관", question: "단맛과 짠맛이 번갈아 나와 계속 먹고 싶게 만드는 음식 표현은 무엇일까요?", options: ["단짠단짠", "밀당밀당", "매콤새콤", "슴슴슴슴"], answer: 0, explanation: "달고 짠 음식은 입맛을 자극해 생각보다 많이 먹게 될 수 있습니다." },
             { id: 35, category: "식습관", question: "인스턴트식품과 탄산음료에 특히 많아, 칼슘의 몸속 흡수를 방해하고 뼈를 부실하게 만드는 원소 성분은?", options: ["철분", "인(P)", "마그네슘", "칼륨"], answer: 1, explanation: "가공식품 속 무기물 '인'을 지나치게 섭취하면 소중한 칼슘이 몸 밖으로 배출됩니다." },
             { id: 36, category: "식습관", question: "다음 중 건강을 해치는 어린이 고열량·저영양 식품 판별법에 해당하지 않는 기준은?", options: ["당류가 매우 높은 식품", "포화지방이 듬뿍 들어간 과자", "열량은 높지만 단백질이 거의 없는 식품", "비타민과 미네랄이 풍부한 식품"], answer: 3, explanation: "비타민과 미네랄이 풍부하다면 영양학적으로 우수한 천연 식품군입니다." },
             { id: 37, category: "식습관", question: "스트레스를 해소하기 위해 아이스크림이나 매운 떡볶이를 갑자기 과도하게 먹는 현상을 무엇이라 할까요?", options: ["심리적 허기(가짜 허기)", "진짜 육체적 허기", "비타민 결핍", "정상적 식욕"], answer: 0, explanation: "심리적 외로움이나 스트레스로 생기는 식욕은 혈당을 채우기 위한 가짜 신호입니다." },
             { id: 38, category: "식습관", question: "소아청소년기 비만이 성인 비만으로 이어지기 쉬운 생물학적 가장 큰 이유는?", options: ["지방 세포의 크기만 줄기 때문에", "지방 세포의 개수가 크게 늘어났기 때문에", "뼈의 강도가 세지기 때문에", "소화 효소가 안 나오기 때문에"], answer: 1, explanation: "어린 시절의 비만은 세포 크기뿐 아니라 지방 세포의 전체 개수를 증가시킵니다." },
-            { id: 39, category: "식습관", question: "체중을 조절하고 건강을 지키기 위해 일주일에 최소 며칠 이상 땀이 날 만큼 유산소 운동을 하는 것이 권장될까요?", options: ["하루도 안 함", "1주일에 3~5회 이상", "한 달에 한 번", "1년에 두 번"], answer: 1, explanation: "주 3회 이상의 꾸준한 야외 신체활동이 소아비만을 치료하는 핵심 열쇠입니다." },
+            { id: 39, category: "식습관", question: "체중을 조절하고 건강을 지키기 위해 일주일에 며칠 정도 꾸준히 몸을 움직이는 것이 좋을까요?", options: ["하루도 안 함", "1주일에 3~5회 이상", "한 달에 한 번", "1년에 두 번"], answer: 1, explanation: "일주일에 3~5회 이상 꾸준히 활동하면 건강한 체중 관리에 도움이 됩니다." },
             { id: 40, category: "식습관", question: "과일주스는 천연 과일보다 체내 혈당을 훨씬 빠르게 올리는데, 그 주된 원인은?", options: ["섬유질이 걸러지고 단순당만 남아 빨리 흡수되어서", "비타민이 너무 무거워서", "차가운 온도 때문에", "물기가 전혀 없어서"], answer: 0, explanation: "즙을 짜내는 과정에서 혈당 상승을 늦추어 주는 식이섬유 장벽이 사라지기 때문입니다." },
 
             // 카테고리: 소비기한 (41 ~ 60)
@@ -516,7 +522,7 @@
             { id: 45, category: "소비기한", question: "식품 안전 관리의 신뢰도를 보증하기 위해 정부가 지정한 마크로, '해썹(HACCP)'이라 부르는 위생 마크는?", options: ["안전관리인증기준 마크", "KS 마크", "친환경 저탄소 마크", "우수 농산물 마크"], answer: 0, explanation: "HACCP(해썹)은 원료부터 최종 섭취까지 유해 물질이 섞이는 것을 차단하는 최고 수준의 위생 인증입니다." },
             { id: 46, category: "소비기한", question: "가공식품을 더 오랫동안 보관하기 위해 유통과정 중 변색과 손상을 막는 식품 보존료를 이르는 용어는?", options: ["식품 가스", "화학 조미료", "식품첨가물", "영양 보충제"], answer: 2, explanation: "보존료, 타르색소, 산화방지제 등은 식약처 허가를 거쳐 사용되는 안전 첨가물입니다." },
             { id: 47, category: "소비기한", question: "알레르기가 있는 학생은 식품 포장지 뒷면의 원재료명 중 어떤 것을 반드시 눈여겨보아야 할까요?", options: ["유통 경로", "포장 용기의 크기", "알레르기 유발 유해 원료 표시", "제조 공장 주소"], answer: 2, explanation: "우유, 메밀, 대두, 땅콩 등 알레르기 유발 물질은 굵은 글씨와 바탕색으로 강조 표시되어 있습니다." },
-            { id: 48, category: "소비기한", question: "소비기한 표시제 시행으로 인해 기대되는 가장 대표적인 긍정적 지구 환경 효과는?", options: ["음식물 쓰레기 감소로 인한 탄소 배출 저감", "화장품 유행 증가", "해외 식품 수입 폭증", "비만 인구 증가"], answer: 0, explanation: "먹을 수 있는 음식을 날짜 기준 때문에 버리는 낭비를 방지하여 엄청난 온실가스를 감축합니다." },
+            { id: 48, category: "소비기한", question: "소비기한 표시제로 기대할 수 있는 대표적인 환경 효과는?", options: ["음식물 쓰레기 감소로 인한 탄소 배출 저감", "화장품 유행 증가", "해외 식품 수입 증가", "비만 인구 증가"], answer: 0, explanation: "먹을 수 있는 식품을 날짜만 보고 버리는 일을 줄이면 음식물 쓰레기와 탄소 배출을 줄일 수 있습니다." },
             { id: 49, category: "소비기한", question: "우유를 개봉하지 않고 냉장 보관(`0~10도`)을 잘 준수했다면, 소비기한 기준 며칠 정도 더 보관해 마실 수 있을까요?", options: ["1시간 이내", "최대 50일 내외", "1년", "10년"], answer: 1, explanation: "우유는 미개봉 냉장 보관 준수 시 소비기한 기준 약 50일까지 먹을 수 있어 보관 온도가 생명입니다." },
             { id: 50, category: "소비기한", question: "식품 포장 뒷면에 표기된 `% 영양성분 기준치`의 기준이 되는 성인 하루 권장 열량 칼로리는 얼마일까요?", options: ["500 kcal", "1000 kcal", "2000 kcal", "5000 kcal"], answer: 2, explanation: "하루 권장 영양성분 기준치는 성인 남녀 표준인 '2,000 kcal'를 기준으로 삼습니다." },
             { id: 51, category: "소비기한", question: "소비기한이 아직 남아있더라도 식품의 포장지가 팽창했거나 이상한 냄새가 난다면 어떻게 조치해야 할까요?", options: ["끓여서 다 먹는다", "반드시 전량 폐기하거나 고객센터에 문의한다", "그냥 코를 막고 삼킨다", "설탕을 쳐서 먹는다"], answer: 1, explanation: "보관 환경 불량으로 내부에 세균이 번식해 가스가 차오른 상태이므로 매우 위험합니다." },
@@ -532,7 +538,7 @@
 
             // 카테고리: 위생 (61 ~ 80)
             { id: 61, category: "위생", question: "세균이나 바이러스가 손을 통해 입으로 들어가 배탈을 유발하는 현상을 무엇이라 부를까요?", options: ["골다공증", "식중독", "야맹증", "아토피"], answer: 1, explanation: "상하거나 병원균 묻은 식품을 섭취해 생기는 전염성 의학 장염 증상을 통칭합니다." },
-            { id: 62, category: "위생", question: "손에 숨은 식중독 원인균을 완벽하게 멸균하고 씻어내기 위해 비누로 손을 씻어야 하는 권장 시간은 최소 몇 초?", options: ["3초", "5초", "30초 이상", "1시간"], answer: 2, explanation: "30초 이상 거품을 내어 구석구석 문질러야 유해 바이러스의 99%가 탈락합니다." },
+            { id: 62, category: "위생", question: "손에 묻은 식중독 원인균을 줄이기 위해 비누로 손을 씻어야 하는 권장 시간은 최소 몇 초일까요?", options: ["3초", "5초", "30초 이상", "1시간"], answer: 2, explanation: "30초 이상 거품을 내어 손바닥, 손등, 손가락 사이를 꼼꼼히 씻는 것이 좋습니다." },
             { id: 63, category: "위생", question: "식중독 원인균 및 바이러스를 사멸하기 위해 조리하는 육류 식품은 내부 온도를 최소 몇 도 이상 가열해야 할까요?", options: ["영상 10도", "영상 30도", "섭씨 85도 이상", "섭씨 300도"], answer: 2, explanation: "육류와 어패류는 내장 중심부 온도를 85℃ 이상에서 충분히 끓여 익혀야 식중독 세균이 죽습니다." },
             { id: 64, category: "위생", question: "겨울철에 자주 발생하며, 전염성이 무척 강해 굴이나 조개류를 덜 익혀 먹을 때 걸리는 식중독 바이러스는?", options: ["코로나 바이러스", "노로 바이러스", "살모넬라균", "황색포도상구균"], answer: 1, explanation: "노로바이러스는 영하 온도에서도 장기 생존하므로 겨울철 조개 조리에 신경 써야 합니다." },
             { id: 65, category: "위생", question: "도마와 칼을 고기용, 채소용으로 따로 분리해 사용하지 않으면 세균이 이리저리 오염을 유발하는데, 이 현상은?", options: ["교차 오염", "혼합 오염", "정밀 위생", "자외선 소독"], answer: 0, explanation: "익히지 않은 날고기 속 균이 익히지 않고 바로 먹는 채소로 전파되는 교차오염은 심각한 장염 원인입니다." },
@@ -540,39 +546,39 @@
             { id: 67, category: "위생", question: "날것으로 먹기 쉬운 달걀 표면에 많이 서식하며, 닭고기 조리 시 전염되어 심한 고열과 구토를 유발하는 대표 세균은?", options: ["살모넬라균", "노로 바이러스", "비브리오균", "보툴리누스균"], answer: 0, explanation: "살모넬라균은 달걀 껍데기와 가금류 장내 기생균으로 깨끗한 손 세척이 예방의 기본입니다." },
             { id: 68, category: "위생", question: "남은 음식을 실온에 두었다가 다시 끓여 먹는 것이 세균 증식 독소 때문에 아주 위험한 근거는?", options: ["끓여도 죽지 않는 강한 내열성 독소를 내뿜는 세균이 존재하기 때문에", "비타민 수치가 올라가서", "냄새가 너무 달콤해져서", "가스레인지 연료 낭비 때문에"], answer: 0, explanation: "황색포도상구균 같은 일부 미생물은 고열로 끓여도 파괴되지 않는 지독한 장 독소를 뿜어냅니다." },
             { id: 69, category: "위생", question: "다음 중 냉장고 내부에 반찬을 보관할 때 위생 안전을 위해 가장 권장되는 올바른 방법은?", options: ["밀폐 덮개 없이 그릇 통째로 둔다", "밀폐 용기에 확실히 담아 확실히 뚜껑을 닫아 냉장한다", "비닐봉지에 대충 말아 구석에 구겨 넣는다", "일주일 동안 상온에 꺼내 둔다"], answer: 1, explanation: "뚜껑을 완전히 차단해야 냉장고 공기 순환 중 교차 오염과 수분 증발을 완전 예방합니다." },
-            { id: 70, category: "위생", question: "급식실에서 점심을 먹기 전 친구들과 장난치다 손을 안 씻고 숟가락과 식기를 만지면 어떤 세균 전염 위험이 올까요?", options: ["키가 훨씬 잘 큰다", "식중독 병원체 및 대장균 교차 감염", "피부가 하얗게 뽀얘진다", "피로감이 완전히 사라진다"], answer: 1, explanation: "공동 숟가락이나 손가락 접촉은 바이러스 매개체의 온상이 되므로 청결 세척이 최우선입니다." },
-            { id: 71, category: "위생", question: "통조림 캔 식품의 윗면이 찌그러졌거나 불룩하게 솟아오른 캔은 절대 먹지 말아야 하는 미생물학적 이유는?", options: ["캔에 금가루 성분이 묻어서", "가장 치명적인 신경 마비 보툴리누스 균 식중독 우려 때문에", "맛이 너무 싱거워져서", "포장 부피를 속여 파는 불량품이어서"], answer: 1, explanation: "산소가 없는 캔 속에 보툴리누스 균이 번식하면 가스를 채우고 치명적인 치사 신경독을 분비합니다." },
-            { id: 72, category: "위생", question: "다음 중 식중독 3대 예방 수칙에 완벽하게 일치하는 행동 지침은 무엇일까요?", options: ["짜게 먹기, 매콤하게 먹기, 가만히 있기", "손 씻기, 익혀 먹기, 끓여 먹기", "날것으로 먹기, 빨리 삼키기, 세균과 놀기", "안 씻기, 안 굽기, 오래 두기"], answer: 1, explanation: "손 씻기, 익혀 먹기, 끓여 먹기는 식약처가 고시한 영원한 식중독 3대 안전 수칙입니다." },
-            { id: 73, category: "위생", question: "여름철 바닷물 온도 상승으로 인해 바닷가 생선회나 조개를 손질 없이 먹을 때 걸리는 주요 패혈증 세균은?", options: ["살모넬라", "비브리오균", "아데노바이러스", "독감바이러스"], answer: 1, explanation: "장염비브리오균은 소금기가 가득한 바닷물 환경을 극도로 사랑하는 해수 식중독균입니다." },
+            { id: 70, category: "위생", question: "급식 전 손을 씻지 않고 숟가락과 식기를 만지면 어떤 위험이 생길 수 있을까요?", options: ["키가 더 잘 큰다", "식중독균이나 대장균이 옮겨갈 수 있다", "피부가 더 깨끗해진다", "피로감이 사라진다"], answer: 1, explanation: "손에 묻은 세균이나 바이러스가 식기와 음식으로 옮겨갈 수 있으므로 식사 전 손 씻기가 중요합니다." },
+            { id: 71, category: "위생", question: "통조림 캔의 윗면이 불룩하게 솟아오른 경우 먹지 말아야 하는 이유는?", options: ["캔에 금가루 성분이 묻어서", "보툴리누스균 등 식중독 위험이 있을 수 있어서", "맛이 너무 싱거워져서", "포장 부피를 속여 파는 불량품이어서"], answer: 1, explanation: "캔 안에서 세균이 번식하면 가스가 생겨 캔이 부풀 수 있으므로 먹지 않는 것이 안전합니다." },
+            { id: 72, category: "위생", question: "다음 중 식중독 3대 예방 수칙에 해당하는 것은 무엇일까요?", options: ["짜게 먹기, 매콤하게 먹기, 가만히 있기", "손 씻기, 익혀 먹기, 끓여 먹기", "날것으로 먹기, 빨리 삼키기, 아무 데나 두기", "안 씻기, 안 굽기, 오래 두기"], answer: 1, explanation: "손 씻기, 익혀 먹기, 끓여 먹기는 식중독을 예방하는 기본 수칙입니다." },
+            { id: 73, category: "위생", question: "여름철 생선회나 조개류를 충분히 익히지 않고 먹을 때 주의해야 하는 세균은?", options: ["살모넬라", "비브리오균", "아데노바이러스", "독감바이러스"], answer: 1, explanation: "비브리오균은 따뜻한 바닷물에서 잘 자라므로 여름철 어패류 섭취와 손질에 주의해야 합니다." },
             { id: 74, category: "위생", question: "식자재 보관 창고에 생기는 대표적인 곰팡이 유래 발암 유독 물질로, 견과류 보관을 조심해야 하는 원인은?", options: ["아플라톡신", "포름알데히드", "미세 플라스틱", "설탕 가루"], answer: 0, explanation: "쌀이나 땅콩 등의 곡류에 기생하는 곰팡이 독소 아플라톡신은 강력한 만성 간 독성 물질입니다." },
-            { id: 75, category: "위생", question: "식기세척기나 뜨거운 스팀 소독을 통해 세균을 물리적 사멸을 유도하는 위생 청결 행위를 이르는 말은?", options: ["방부제 살포", "열탕 소독 및 자외선 살균", "화학 탈색", "기름 코팅"], answer: 1, explanation: "고온 스팀 소독은 유해 유기물과 균의 세포막 단백질을 굳혀 즉사시키는 정직한 안전책입니다." },
-            { id: 76, category: "위생", question: "냉장 보관 기간이 만료된 햄이나 소시지에서 미끌미끌한 진액이 나오며 신맛이 나기 시작했다면 그것은?", options: ["고소한 천연 치즈 액이 흐르는 과정", "미생물 대량 번식으로 부패 썩음이 진행된 상태", "단백질이 키 성장 유도액으로 변화한 것", "정상적 숙성 과정"], answer: 1, explanation: "아미노산 변패가 일어나 세균 콜로니 점막이 분출된 유해한 쓰레기이므로 속히 버리셔야 합니다." },
-            { id: 77, category: "위생", question: "상한 양배추나 나물에 생겨 아기나 산모에게 아주 치명적인 패혈증을 초래하는 저온 생존력 극강의 균은?", options: ["살모넬라", "리스테리아균", "대장균 0157", "곰팡이"], answer: 1, explanation: "리스테리아 모노사이토제네스는 냉장고 내부 영상 4도 근처 저온에서도 증식이 쉬운 끈질긴 장염균입니다." },
-            { id: 78, category: "위생", question: "급식실 식수 관리 중 불특정 다수가 이용하는 정수기 꼭지를 물병 입구로 툭툭 부딪치며 떠먹을 때 올 수 있는 오염 현상은?", options: ["정수 능력이 두 배 증가한다", "타액을 통한 노로바이러스 및 교차 전염", "물이 엄청나게 시원해진다", "칼슘 성분이 증가한다"], answer: 1, explanation: "구강 내 타액이나 박테리아가 꼭지에 전이되어 정수기 자체를 교차 감염원으로 전락시킬 수 있습니다." },
-            { id: 79, category: "위생", question: "야외 소풍을 가서 김밥을 안전하게 먹기 위해 들고 다니는 냉기 공급 아이스팩 보관 주머니 가방은?", options: ["아이스박스 및 보냉 백", "가죽 가방", "종이 쇼핑백", "투명 비닐봉지"], answer: 0, explanation: "여름철 김밥은 2시간 이내에 세균 폭증이 일어나므로 보냉 온도를 낮추어야 지킬 수 있습니다." },
-            { id: 80, category: "위생", question: "학교 급식을 마친 후 남은 잔반 음식물이 식판에서 수 시간 방치될 때 발생하는 미생물학적 악순환은?", options: ["음식이 저절로 소화 흡수된다", "파리와 대장균 등 매개 해충의 기하급수적 번식", "향기로운 꽃 향이 풍긴다", "영양 성분이 늘어난다"], answer: 1, explanation: "수분과 단백질이 포화된 유기물은 즉시 세균의 천국이 되므로 즉시 세척 및 잔반 비우기가 기본입니다." },
+            { id: 75, category: "위생", question: "식기세척기나 뜨거운 물, 자외선 등을 이용해 세균을 줄이는 위생 관리 방법은?", options: ["방부제 살포", "열탕 소독 및 자외선 살균", "화학 탈색", "기름 코팅"], answer: 1, explanation: "열탕 소독과 자외선 살균은 식기와 조리 도구의 세균을 줄이는 데 도움이 됩니다." },
+            { id: 76, category: "위생", question: "냉장 보관 기간이 지난 햄이나 소시지에서 미끌거림과 신맛이 느껴진다면 어떤 상태일까요?", options: ["고소한 천연 치즈 액이 흐르는 과정", "미생물이 늘어나 부패가 진행된 상태", "단백질이 키 성장 성분으로 변한 것", "정상적인 숙성 과정"], answer: 1, explanation: "냄새, 색, 촉감이 이상해진 식품은 부패했을 가능성이 있으므로 먹지 않고 버려야 합니다." },
+            { id: 77, category: "위생", question: "상한 채소나 나물류에서 주의해야 하며 저온에서도 살아남을 수 있는 식중독균은?", options: ["살모넬라", "리스테리아균", "대장균 0157", "곰팡이"], answer: 1, explanation: "리스테리아균은 냉장 온도에서도 증식할 수 있어 오래된 식품은 주의해서 확인해야 합니다." },
+            { id: 78, category: "위생", question: "여러 사람이 쓰는 정수기 꼭지에 물병 입구를 직접 대면 생길 수 있는 문제는?", options: ["정수 능력이 두 배 증가한다", "타액을 통한 바이러스나 세균의 교차 오염", "물이 더 시원해진다", "칼슘 성분이 증가한다"], answer: 1, explanation: "입이 닿은 물병이나 컵이 정수기 꼭지에 닿으면 세균과 바이러스가 옮겨갈 수 있습니다." },
+            { id: 79, category: "위생", question: "야외 소풍에서 김밥을 안전하게 보관하기 위해 아이스팩과 함께 쓰면 좋은 가방은?", options: ["아이스박스 및 보냉 백", "가죽 가방", "종이 쇼핑백", "투명 비닐봉지"], answer: 0, explanation: "김밥은 상온에 오래 두면 세균이 늘 수 있으므로 보냉 백에 넣어 시원하게 보관하는 것이 좋습니다." },
+            { id: 80, category: "위생", question: "급식 후 남은 음식물이 식판에 오래 방치되면 어떤 문제가 생길 수 있을까요?", options: ["음식이 저절로 소화 흡수된다", "파리와 세균이 늘어 위생 문제가 생긴다", "향기로운 꽃 향이 풍긴다", "영양 성분이 늘어난다"], answer: 1, explanation: "남은 음식물은 세균과 해충이 모이기 쉬우므로 식사 후 바로 정리하는 것이 좋습니다." },
 
             // 카테고리: 환경 (81 ~ 100)
-            { id: 81, category: "환경", question: "식품이 생산자 손을 떠나 소비자 식탁에 오기까지 이동 거리에 따른 환경 오염 물질 수치를 뜻하는 것은?", options: ["푸드 마일리지", "푸드 가이드", "카본 다이어리", "에코 하우스"], answer: 0, explanation: "수송 거리가 멀어질수록 배와 비행기가 이산화탄소를 내뿜어 환경을 파괴함을 경고하는 척도입니다." },
+            { id: 81, category: "환경", question: "식품이 생산지에서 우리 식탁까지 이동한 거리를 환경 영향과 함께 생각하는 개념은?", options: ["푸드 마일리지", "푸드 가이드", "카본 다이어리", "에코 하우스"], answer: 0, explanation: "푸드 마일리지가 길수록 운송 과정에서 에너지 사용과 탄소 배출이 늘어날 수 있습니다." },
             { id: 82, category: "환경", question: "우리가 사는 지역 내에서 건강하게 키워 수송 거리를 획기적으로 줄인 친환경 먹거리를 지칭하는 표현은?", options: ["글로벌 푸드", "로컬 푸드", "정크 푸드", "패스트 푸드"], answer: 1, explanation: "로컬 푸드는 이산화탄소 절감 및 신선하고 친근한 상생 푸드 문화를 일궈냅니다." },
-            { id: 83, category: "환경", question: "우리가 일상 급식에서 남겨 버리는 음식 쓰레기에서 발생하는 온실가스를 감축하기 위한 청결 빈 그릇 운동은?", options: ["잔반 제로 캠페인", "과식 권장 운동", "단식 훈련", "해외 음식 수입"], answer: 0, explanation: "식판을 말끔하게 비우면 탄소 가스를 감축하여 병들어가는 지구의 온난화를 효과적으로 지킬 수 있습니다." },
-            { id: 84, category: "환경", question: "배추와 무를 소금에 절이고 갖은 고춧가루, 마늘, 젓갈을 버무려 옹기에 담아 발효시키는 한국 대표 위대한 보존식은?", options: ["김치", "피클", "된장", "치즈"], answer: 0, explanation: "김치는 풍부한 유산균을 품은 세계가 인정한 대한민국 국보급 정통 영양식품입니다." },
+            { id: 83, category: "환경", question: "급식에서 먹을 만큼 받고 남기지 않아 음식물 쓰레기를 줄이는 활동은?", options: ["잔반 제로 캠페인", "과식 권장 운동", "단식 훈련", "해외 음식 수입"], answer: 0, explanation: "식판을 알맞게 비우면 음식물 쓰레기와 온실가스 배출을 줄이는 데 도움이 됩니다." },
+            { id: 84, category: "환경", question: "배추와 무를 소금에 절이고 양념을 버무려 발효시키는 우리나라 대표 발효 음식은?", options: ["김치", "피클", "된장", "치즈"], answer: 0, explanation: "김치는 유산균이 풍부한 우리나라의 대표적인 전통 발효 음식입니다." },
             { id: 85, category: "환경", question: "정월 대보름에 단단한 잣, 호두, 은행 등을 이로 아작 깨물어 부스럼을 없애고 치아를 빌던 명절 식속은?", options: ["부럼 깨기", "떡국 먹기", "송편 빚기", "김장 하기"], answer: 0, explanation: "대보름 부럼깨기는 불포화지방산이 많은 견과류를 채워 피부병을 예방하던 조상의 생활 지혜입니다." },
             { id: 86, category: "환경", question: "미세한 숨구멍이 있어 김치나 된장을 담갔을 때 썩지 않고 숨 쉬듯 맛있게 발효시켜 주는 훌륭한 전통 그릇은?", options: ["유리 그릇", "플라스틱 통", "옹기(독)", "스테인리스 냄비"], answer: 2, explanation: "진흙을 가마에 구운 옹기는 표면의 작은 숨구멍이 유해균은 막고 가스는 배출해 발효를 이끕니다." },
-            { id: 87, category: "환경", question: "봄철 입맛을 돋우고 비타민을 가득 충전해 주기 위해 봄 산야에서 캐 먹는 쑥, 냉이, 달래 등의 나물들을 통칭하는 말은?", options: ["제철 봄나물", "겨울 김장", "수입 허브", "여름 열대과일"], answer: 0, explanation: "제철 음식은 인공적인 하우스 난방 가스를 쓰지 않아 무공해 에코 그린 식단에 필수적입니다." },
+            { id: 87, category: "환경", question: "봄철에 나는 쑥, 냉이, 달래 같은 나물들을 통칭하는 말은?", options: ["제철 봄나물", "겨울 김장", "수입 허브", "여름 열대과일"], answer: 0, explanation: "제철 음식은 그 계절에 자연스럽게 자라 신선하고 환경 부담도 줄일 수 있습니다." },
             { id: 88, category: "환경", question: "다음 중 가축을 좁고 답답한 사육 철창 우리에 가두지 않고 뛰어놀게 해 얻은 인도적인 친환경 축산 식품 인증은?", options: ["동물복지 인증", "전통식품 인증", "KS 마크", "GAP 마크"], answer: 0, explanation: "동물복지 마크는 인도적 환경에서 자란 건강한 동물의 축산물을 보증합니다." },
-            { id: 89, category: "환경", question: "우리가 환경을 사랑하고 기후 변화를 극복하기 위해 일주일에 하루 고기 섭취를 중단하고 먹는 저탄소 식단 명칭은?", options: ["채식주의 식단(저탄소 메일)", "지방 육류 과식 식단", "소금 폭탄 식단", "냉동 인스턴트 가공식품 식단"], answer: 0, explanation: "축산업에서 뿜는 메탄가스와 산림 파괴는 무궁무진하므로, 간헐적 채식은 지구를 구하는 특효약입니다." },
+            { id: 89, category: "환경", question: "환경을 생각해 일주일에 하루 정도 고기 섭취를 줄이고 채소 중심으로 먹는 식단은?", options: ["채식 중심 식단(저탄소 식단)", "지방 육류 과식 식단", "소금 폭탄 식단", "냉동 인스턴트 가공식품 식단"], answer: 0, explanation: "고기 섭취를 조금 줄이고 채소와 곡류를 균형 있게 먹으면 탄소 배출을 줄이는 데 도움이 됩니다." },
             { id: 90, category: "환경", question: "동짓날 붉은 팥을 삶아 죽을 쑤어 새알심을 동동 띄워 먹으며 액운과 감기를 이기려던 선조들의 절기 음식은?", options: ["팥죽", "떡국", "삼계탕", "송편"], answer: 0, explanation: "동지 팥죽의 붉은 팥은 액운을 쫓고 비타민 B1을 듬뿍 주어 동절기 신경과 혈관 건강을 도왔습니다." },
-            { id: 91, category: "환경", question: "해외 초콜릿이나 커피를 살 때 생산국 아동 노동을 제한하고 일한 농부에게 합당한 몫을 보장해 환경을 지키는 대안 무역은?", options: ["공정 무역 (Fair Trade)", "무제한 수입", "무역 제재", "보호 무역"], answer: 0, explanation: "공정 무역 제품을 사면 제3세계 빈민 구휼과 함께 난개발 없는 에코 보존 농업을 촉진합니다." },
-            { id: 92, category: "환경", question: "음식물 쓰레기를 퇴비로 환원하거나 신재생 에너지 가스로 재가공하여 폐기물을 한 방울도 안 남기는 녹색 사이클링 명칭은?", options: ["음식 쓰레기 자원 순환화", "단순 소각 처리", "바다에 그냥 무단 폐기", "아무렇게나 땅에 매립"], answer: 0, explanation: "음식 잔반은 가치가 높은 에너지 자원으로 재활용되어 오염 가스를 막는 에코 공장 원료가 됩니다." },
-            { id: 93, category: "환경", question: "식재료 마크 중 농산물 생산 과정에서 이산화탄소를 극도로 적게 방출해 인증받은 지구 살리기 녹색 훈장 마크는?", options: ["저탄소 농산물 인증", "수입 완제품 마크", "유전자 변형 마크", "고열량 인증"], answer: 0, explanation: "저탄소 마크 농산물은 에너지 투입량과 화학비료를 한계선까지 줄인 친환경 최전선 마크입니다." },
-            { id: 94, category: "환경", question: "콩을 메주로 띄워 소금물에 익혀 우려낸 맑은 국물을 퍼내어 깊이 묵힌 한국 정통 국거리 발효 에센스 조미료는?", options: ["간장", "케첩", "식초", "겨자"], answer: 0, explanation: "간장과 된장은 콩의 아미노산 발효 가치를 최고조로 증폭시킨 지혜의 산물입니다." },
-            { id: 95, category: "환경", question: "다음 중 친환경 농가에서 화학 농약 대신 잡초를 잡기 위해 논에 방사하는 귀여운 에코 조류 생물은?", options: ["우렁이 및 청둥오리", "갈매기", "매", "독수리"], answer: 0, explanation: "우렁이 농법은 우렁이가 잡초 풀을 먹어 치워 비싼 농약 비료 살포를 완벽히 줄이는 자연 유기농법입니다." },
-            { id: 96, category: "환경", question: "봄나물의 대표로 비타민 A와 철분이 많으며, 특유의 알싸한 마늘 향과 달콤 쌉싸름한 맛으로 봄 국거리에 빠지지 않는 뿌리 채소는?", options: ["달래", "수박", "파인애플", "바나나"], answer: 0, explanation: "달래는 혈액순환과 피로회복에 특화된 싱그러운 춘양 봄 철 에센스입니다." },
-            { id: 97, category: "환경", question: "오랜 시간 숙성될수록 유익한 유산균과 단백질이 증가하고 항암 가치가 늘어나는 한국의 김치, 된장 등을 통칭하는 훌륭한 조리 방식은?", options: ["발효 식품 문화", "정제 인스턴트", "초가공 식품", "날것 문화"], answer: 0, explanation: "미생물의 착한 분해 활성 능력인 발효는 영양소 흡수를 늘리고 독소를 정화합니다." },
-            { id: 98, category: "환경", question: "다음 중 가공 시 포장 폐기물 비닐 플라스틱 쓰레기가 지나치게 배출되지 않는 착한 유기농 간식은?", options: ["껍질째 먹는 유기농 제철 과일", "삼중 포장 초콜릿 과자", "배달 패스트푸드 햄버거", "일회용 컵 스무디"], answer: 0, explanation: "자연 포장재인 껍질만 남기고 흙으로 스며드는 천연 사과나 귤 등은 폐기물 탄소가 전혀 없습니다." },
-            { id: 99, category: "환경", question: "식료품 쇼핑을 하실 때 비닐봉지를 계속 사서 자원 탄소를 낭비하는 대신 들고 다녀야 할 착한 다회용 장바구니 에코 가방은?", options: ["종이 백", "에코백 (천 가방)", "일회용 검정 비닐봉투", "비닐 랩"], answer: 1, explanation: "한 개의 에코 장바구니 장기 사용은 수천 장의 가공 비닐 탄소를 매몰하는 영웅의 발걸음입니다." },
-            { id: 100, category: "환경", question: "우리 춘양초 어린이들이 학교 급식을 받을 때 먹을 수 있을 만큼만 식판에 알맞게 정량 배급을 받아 남기지 않고 싹 비우면 지구 기온 상승 속도를 늦출 수 있는 과학적 이유는 무엇일까요?", options: ["음식 폐기물의 썩는 과정에서 메탄가스와 탄소 배출이 대폭 억제되어 기후 이상 온난화를 지킬 수 있기 때문", "식판 무게가 무거워져서", "조리사님이 슬퍼져서", "식수 시설 소독이 불필요해져서"], answer: 0, explanation: "음식 쓰레기가 지구 온실가스(메탄) 생산의 주력 원인인 만큼, 싹 비우기 행동이야말로 확실한 지구 지킴이 실천입니다." }
+            { id: 91, category: "환경", question: "초콜릿이나 커피를 살 때 생산자에게 정당한 대가가 돌아가도록 돕는 무역 방식은?", options: ["공정 무역 (Fair Trade)", "무제한 수입", "무역 제재", "보호 무역"], answer: 0, explanation: "공정 무역은 생산자가 정당한 대가를 받고 지속 가능한 생산을 이어가도록 돕는 방식입니다." },
+            { id: 92, category: "환경", question: "음식물 쓰레기를 퇴비나 에너지로 다시 활용하는 과정을 무엇이라고 할까요?", options: ["음식 쓰레기 자원 순환화", "단순 소각 처리", "바다에 그냥 무단 폐기", "아무렇게나 땅에 매립"], answer: 0, explanation: "음식물 쓰레기를 자원으로 다시 활용하면 폐기물을 줄이고 환경 부담도 낮출 수 있습니다." },
+            { id: 93, category: "환경", question: "농산물 생산 과정에서 탄소 배출을 줄였음을 알려주는 인증 마크는?", options: ["저탄소 농산물 인증", "수입 완제품 마크", "유전자 변형 마크", "고열량 인증"], answer: 0, explanation: "저탄소 농산물 인증은 생산 과정의 에너지 사용과 탄소 배출을 줄인 농산물에 붙는 표시입니다." },
+            { id: 94, category: "환경", question: "콩을 발효시켜 만든 우리나라 전통 조미료로 음식의 간을 맞출 때 쓰는 것은?", options: ["간장", "케첩", "식초", "겨자"], answer: 0, explanation: "간장은 콩을 발효해 만든 전통 조미료로 음식의 맛과 간을 맞추는 데 쓰입니다." },
+            { id: 95, category: "환경", question: "친환경 농가에서 농약 사용을 줄이기 위해 논에서 함께 기르기도 하는 생물은?", options: ["우렁이 및 청둥오리", "갈매기", "매", "독수리"], answer: 0, explanation: "우렁이와 오리는 논의 잡초나 해충을 줄이는 데 도움을 주어 친환경 농법에 활용됩니다." },
+            { id: 96, category: "환경", question: "봄나물의 하나로 알싸한 향이 나고 국이나 무침에 자주 쓰이는 채소는?", options: ["달래", "수박", "파인애플", "바나나"], answer: 0, explanation: "달래는 봄철에 많이 먹는 제철 나물로 비타민과 무기질을 함께 섭취할 수 있습니다." },
+            { id: 97, category: "환경", question: "김치, 된장처럼 미생물의 작용으로 맛과 영양이 달라지는 식품 문화를 무엇이라고 할까요?", options: ["발효 식품 문화", "정제 인스턴트", "초가공 식품", "날것 문화"], answer: 0, explanation: "발효는 미생물이 식품의 맛과 향을 바꾸고, 저장성과 영양적 가치를 높이는 데 도움을 줍니다." },
+            { id: 98, category: "환경", question: "다음 중 포장 쓰레기를 비교적 적게 만들 수 있는 간식은?", options: ["껍질째 먹는 유기농 제철 과일", "삼중 포장 초콜릿 과자", "배달 패스트푸드 햄버거", "일회용 컵 스무디"], answer: 0, explanation: "제철 과일처럼 포장이 적은 식품을 고르면 비닐과 플라스틱 쓰레기를 줄일 수 있습니다." },
+            { id: 99, category: "환경", question: "식료품을 살 때 일회용 비닐봉지 대신 반복해서 사용할 수 있는 가방은?", options: ["종이 백", "에코백 (천 가방)", "일회용 검정 비닐봉투", "비닐 랩"], answer: 1, explanation: "에코백이나 장바구니를 반복해서 사용하면 일회용 비닐 사용을 줄일 수 있습니다." },
+            { id: 100, category: "환경", question: "급식을 먹을 만큼만 받고 남기지 않으면 환경 보호에 도움이 되는 이유는 무엇일까요?", options: ["음식 폐기물이 줄어 메탄가스와 탄소 배출을 줄일 수 있기 때문", "식판 무게가 무거워져서", "조리사님이 슬퍼져서", "식수 시설 소독이 불필요해져서"], answer: 0, explanation: "음식물 쓰레기가 줄면 처리 과정에서 생기는 온실가스도 줄어 환경 보호에 도움이 됩니다." }
         ];
 
         /* 글로벌 상태 변수 */
@@ -583,7 +589,8 @@
         let gbStreak = 0;
         let gbTimeLeft = 20;
         let timerInterval = null;
-        let maxQuestionsCount = 10; // 10, 30, 50
+        let maxQuestionsCount = 10; // 10, 20, 30, 50
+        let isAnswerLocked = false;
 
         // 연습장 상태 변수
         let prQuestionsList = [...gbQuestions]; // 복사본
@@ -593,7 +600,7 @@
         let showAnswersInDict = true;
 
         // 랭킹 카테고리 탭 상태
-        let activeRankingTab = '10'; // '10', '30', '50'
+        let activeRankingTab = '10'; // '10', '20', '30', '50'
 
         // Web Audio API 오디오 컨텍스트 싱글톤
         let audioCtx = null;
@@ -849,9 +856,16 @@
             gbScore = 0;
             gbStreak = 0;
             gbCurrentIdx = 0;
+            isAnswerLocked = false;
+
+            let sourceQuestions = [...gbQuestions];
+            if (questionsCount === 20) {
+                const easyIds = [1, 2, 3, 4, 5, 21, 22, 23, 24, 41, 42, 43, 61, 62, 63, 81, 82, 83, 98, 100];
+                sourceQuestions = gbQuestions.filter(q => easyIds.includes(q.id));
+            }
 
             // 중복 없이 랜덤 셔플된 문제 선정
-            const shuffled = [...gbQuestions].sort(() => 0.5 - Math.random());
+            const shuffled = sourceQuestions.sort(() => 0.5 - Math.random());
             gbQuestionsList = shuffled.slice(0, questionsCount);
 
             switchScreen('screen-goldenbell-play');
@@ -864,6 +878,7 @@
 
         function loadGoldenbellQuestion() {
             clearCanvas();
+            isAnswerLocked = false;
             if (gbCurrentIdx >= gbQuestionsList.length) {
                 // 완주 축하 연출 및 명예의 전당 이름 입력 팝업 활성화
                 stopTimer();
@@ -907,6 +922,18 @@
             startTimer(20);
         }
 
+        function setGoldenbellOptionButtonsDisabled(disabled) {
+            const optionsContainer = document.getElementById('gb-options-container');
+            if (!optionsContainer) return;
+
+            Array.from(optionsContainer.getElementsByTagName('button')).forEach(button => {
+                button.disabled = disabled;
+                button.classList.toggle('opacity-60', disabled);
+                button.classList.toggle('cursor-not-allowed', disabled);
+                button.classList.toggle('active:scale-95', !disabled);
+            });
+        }
+
         function startTimer(seconds) {
             stopTimer();
             gbTimeLeft = seconds;
@@ -917,6 +944,8 @@
                 document.getElementById('gb-timer').innerText = gbTimeLeft;
                 if (gbTimeLeft <= 0) {
                     stopTimer();
+                    isAnswerLocked = true;
+                    setGoldenbellOptionButtonsDisabled(true);
                     playLoseSound();
                     
                     const q = gbQuestionsList[gbCurrentIdx];
@@ -935,6 +964,10 @@
         }
 
         function selectGoldenbellAnswer(selected) {
+            if (isAnswerLocked) return;
+
+            isAnswerLocked = true;
+            setGoldenbellOptionButtonsDisabled(true);
             stopTimer();
             const q = gbQuestionsList[gbCurrentIdx];
             
@@ -989,6 +1022,8 @@
             }
             prCurrentIdx = 0;
             updatePracticeProgressInfo();
+            // 사용자가 카테고리를 변경하면 즉시 문제를 다시 불러옴
+            loadPracticeQuestion();
         }
 
         function updatePracticeProgressInfo() {
@@ -1174,14 +1209,14 @@
         let isOnlineDatabaseWorking = false;
         // Npoint.io 무료 JSON 저장소 (춘양초 전용 bin)
         // ★★★ 아래 ID를 npoint.io에서 생성한 본인의 bin ID로 교체하세요 ★★★
-        const NPOINT_BIN_ID = "244f85ea912d9e47ad92";
+        const NPOINT_BIN_ID = "0fc011d95f8e6b2da1c3";
         const CLOUD_DB_BASE = `https://api.npoint.io/${NPOINT_BIN_ID}`;
-        const RANKING_TABS = ['10', '30', '50'];
+        const RANKING_TABS = ['10', '20', '30', '50'];
         const RANKING_STORAGE_KEY = "cy_local_rankings";
         const MAX_RANKING_ITEMS = 10;
 
         function createEmptyRankings() {
-            return { "10": [], "30": [], "50": [] };
+            return { "10": [], "20": [], "30": [], "50": [] };
         }
 
         function getTodayString() {
@@ -1290,7 +1325,7 @@
 
         async function saveCloudRankings(category, dataList) {
             // 1) 기존 전체 데이터 읽기
-            let fullData = { "10": [], "30": [], "50": [] };
+            let fullData = createEmptyRankings();
             try {
                 const getResp = await fetchWithTimeout(CLOUD_DB_BASE, { method: 'GET', cache: 'no-store' });
                 if (getResp.ok) {
@@ -1383,13 +1418,13 @@
 
         function switchRankingTab(tabNum) {
             activeRankingTab = tabNum;
-            const tabs = ['10', '30', '50'];
+            const tabs = ['10', '20', '30', '50'];
             tabs.forEach(t => {
                 const tabEl = document.getElementById(`tab-rank-${t}`);
                 if (t === tabNum) {
-                    tabEl.className = "py-2 text-xs font-bold rounded-lg transition text-slate-700 bg-white shadow-sm";
+                    tabEl.className = "py-2 text-[10px] sm:text-xs font-bold rounded-lg transition text-slate-700 bg-white shadow-sm";
                 } else {
-                    tabEl.className = "py-2 text-xs font-bold rounded-lg transition text-slate-500 hover:bg-slate-200";
+                    tabEl.className = "py-2 text-[10px] sm:text-xs font-bold rounded-lg transition text-slate-500 hover:bg-slate-200";
                 }
             });
             loadAndRenderRankings();
@@ -1550,7 +1585,7 @@
 
             if (isOnlineDatabaseWorking) {
                 // Npoint.io 클라우드 데이터베이스 초기화 (전체 문서를 빈 랭킹으로 교체)
-                const emptyData = { "10": [], "30": [], "50": [] };
+                const emptyData = { "10": [], "20": [], "30": [], "50": [] };
                 Promise.all([
                     fetch(CLOUD_DB_BASE, {
                         method: 'POST',

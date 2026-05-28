@@ -1167,8 +1167,10 @@
         // ========================== 로컬 및 하이브리드 서버 실시간 랭킹 시스템 ==========================
         const FIREWALL_TIMEOUT = 3500; // 학교 망 3.5초 응답 타임아웃
         let isOnlineDatabaseWorking = false;
-        // 무료 공개형 API를 활용한 공유형 데이터베이스 키값 설정 (춘양초만의 고유 식별 주소 사용)
-        const CLOUD_DB_BASE = "https://kvdb.io/PCHp7wPjR9ZfM889X8kYxU/cy_rank_";
+        // Npoint.io 무료 JSON 저장소 (춘양초 전용 bin)
+        // ★★★ 아래 ID를 npoint.io에서 생성한 본인의 bin ID로 교체하세요 ★★★
+        const NPOINT_BIN_ID = "244f85ea912d9e47ad92";
+        const CLOUD_DB_BASE = `https://api.npoint.io/${NPOINT_BIN_ID}`;
         const RANKING_TABS = ['10', '30', '50'];
         const RANKING_STORAGE_KEY = "cy_local_rankings";
         const MAX_RANKING_ITEMS = 10;
@@ -1261,7 +1263,7 @@
         }
 
         async function loadCloudRankings(category) {
-            const response = await fetchWithTimeout(CLOUD_DB_BASE + category, {
+            const response = await fetchWithTimeout(`${CLOUD_DB_BASE}/${category}`, {
                 method: 'GET',
                 cache: 'no-store'
             });
@@ -1271,24 +1273,38 @@
                 throw new Error(`랭킹 불러오기 실패: ${response.status}`);
             }
 
-            const text = await response.text();
-            if (!text.trim()) return [];
+            const data = await response.json();
+            if (!data) return [];
             try {
-                const parsed = JSON.parse(text);
-                return normalizeRankingList(Array.isArray(parsed) ? parsed : []);
+                return normalizeRankingList(Array.isArray(data) ? data : []);
             } catch (e) {
-                console.warn('클라우드 랭킹 JSON 파싱 실패:', e, text);
+                console.warn('클라우드 랭킹 파싱 실패:', e);
                 return [];
             }
         }
 
         async function saveCloudRankings(category, dataList) {
-            const payload = JSON.stringify(sortAndLimitRankings(dataList));
-            console.log(`[랭킹 저장] 카테고리: ${category}, 데이터 수: ${sortAndLimitRankings(dataList).length}`, payload);
-            const response = await fetchWithTimeout(CLOUD_DB_BASE + category, {
-                method: 'PUT',
+            // 1) 기존 전체 데이터 읽기
+            let fullData = { "10": [], "30": [], "50": [] };
+            try {
+                const getResp = await fetchWithTimeout(CLOUD_DB_BASE, { method: 'GET', cache: 'no-store' });
+                if (getResp.ok) {
+                    const existing = await getResp.json();
+                    if (existing && typeof existing === 'object') fullData = { ...fullData, ...existing };
+                }
+            } catch (e) {
+                console.warn('기존 데이터 읽기 실패, 새로 생성합니다:', e);
+            }
+
+            // 2) 해당 카테고리만 갱신
+            fullData[category] = sortAndLimitRankings(dataList);
+            console.log(`[랭킹 저장] 카테고리: ${category}, 데이터 수: ${fullData[category].length}`);
+
+            // 3) 전체 데이터 저장 (POST = 전체 교체)
+            const response = await fetchWithTimeout(CLOUD_DB_BASE, {
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: payload
+                body: JSON.stringify(fullData)
             });
 
             if (!response.ok) {
@@ -1328,7 +1344,7 @@
 
         // 네트워크 상태를 미리 가볍게 체크하고 비동기적 백업 로드 준비
         async function detectNetworkAndPreloadRankings() {
-            const testUrl = CLOUD_DB_BASE + "10";
+            const testUrl = `${CLOUD_DB_BASE}/10`;
             const statusLabel = document.getElementById('network-status-label');
             
             statusLabel.innerText = "🔌 교내 방화벽 상태 진단 중...";
@@ -1526,12 +1542,14 @@
             localStorage.removeItem("cy_max_streak");
 
             if (isOnlineDatabaseWorking) {
-                // 클라우드 데이터베이스 초기화
+                // Npoint.io 클라우드 데이터베이스 초기화 (전체 문서를 빈 랭킹으로 교체)
                 const emptyData = { "10": [], "30": [], "50": [] };
                 Promise.all([
-                    fetch(CLOUD_DB_BASE + "10", { method: 'POST', body: JSON.stringify([]) }),
-                    fetch(CLOUD_DB_BASE + "30", { method: 'POST', body: JSON.stringify([]) }),
-                    fetch(CLOUD_DB_BASE + "50", { method: 'POST', body: JSON.stringify([]) })
+                    fetch(CLOUD_DB_BASE, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(emptyData)
+                    })
                 ]).then(() => {
                     closeAdminModal();
                     showCustomAlert("초기화 성공 🧹", "실시간 서버 및 모든 로컬 점수가 안전히 포맷 완료되었습니다!", "🟢", "메인 홈으로", () => {

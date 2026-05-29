@@ -147,15 +147,15 @@
                 도전하고 싶은 문항 수를 골라보세요! 모두 맞히면 실시간 명예의 전당 보드에 나의 이름과 학년/반이 남겨집니다.
             </p>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <button onclick="startGoldenbell(10)" class="bg-gradient-to-br from-teal-50 to-emerald-100 border-2 border-emerald-500 hover:bg-emerald-200 p-5 rounded-2xl text-center transition">
-                    <span class="text-3xl block mb-2">🌱</span>
-                    <span class="font-bold text-lg text-emerald-950">미니 도전 (10선)</span>
-                    <p class="text-xs text-emerald-800 mt-2">간단히 10문제만 신속하게 풀어보는 기초 단계입니다.</p>
-                </button>
                 <button onclick="startGoldenbell(20)" class="bg-gradient-to-br from-sky-50 to-blue-100 border-2 border-blue-500 hover:bg-blue-200 p-5 rounded-2xl text-center transition">
                     <span class="text-3xl block mb-2">👶</span>
                     <span class="font-bold text-lg text-blue-950">새싹 도전 (20선)</span>
                     <p class="text-xs text-blue-800 mt-2">초등 1~2학년 친구들을 위한 쉬운 난이도의 20문제 코스입니다.</p>
+                </button>
+                <button onclick="startGoldenbell(10)" class="bg-gradient-to-br from-teal-50 to-emerald-100 border-2 border-emerald-500 hover:bg-emerald-200 p-5 rounded-2xl text-center transition">
+                    <span class="text-3xl block mb-2">🌱</span>
+                    <span class="font-bold text-lg text-emerald-950">미니 도전 (10선)</span>
+                    <p class="text-xs text-emerald-800 mt-2">간단히 10문제만 신속하게 풀어보는 기초 단계입니다.</p>
                 </button>
                 <button onclick="startGoldenbell(30)" class="bg-gradient-to-br from-amber-50 to-amber-100 border-2 border-amber-500 hover:bg-amber-200 p-5 rounded-2xl text-center transition">
                     <span class="text-3xl block mb-2">🔥</span>
@@ -395,8 +395,8 @@
 
             <!-- 랭킹 부문 선택 탭 -->
             <div class="grid grid-cols-4 gap-1 bg-slate-100 p-1 rounded-xl">
-                <button id="tab-rank-10" onclick="switchRankingTab('10')" class="py-2 text-[10px] sm:text-xs font-bold rounded-lg transition text-slate-700 bg-white shadow-sm">미니 10선</button>
                 <button id="tab-rank-20" onclick="switchRankingTab('20')" class="py-2 text-[10px] sm:text-xs font-bold rounded-lg transition text-slate-500 hover:bg-slate-200">새싹 20선</button>
+                <button id="tab-rank-10" onclick="switchRankingTab('10')" class="py-2 text-[10px] sm:text-xs font-bold rounded-lg transition text-slate-700 bg-white shadow-sm">미니 10선</button>
                 <button id="tab-rank-30" onclick="switchRankingTab('30')" class="py-2 text-[10px] sm:text-xs font-bold rounded-lg transition text-slate-500 hover:bg-slate-200">마스터 30선</button>
                 <button id="tab-rank-50" onclick="switchRankingTab('50')" class="py-2 text-[10px] sm:text-xs font-bold rounded-lg transition text-slate-500 hover:bg-slate-200">신화 50선</button>
             </div>
@@ -864,8 +864,12 @@
                 sourceQuestions = gbQuestions.filter(q => easyIds.includes(q.id));
             }
 
-            // 중복 없이 랜덤 셔플된 문제 선정
-            const shuffled = sourceQuestions.sort(() => 0.5 - Math.random());
+            // 중복 없이 랜덤 셔플된 문제 선정 (Fisher-Yates 알고리즘으로 완벽한 랜덤 보장)
+            const shuffled = [...sourceQuestions];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
             gbQuestionsList = shuffled.slice(0, questionsCount);
 
             switchScreen('screen-goldenbell-play');

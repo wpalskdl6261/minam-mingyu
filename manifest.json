@@ -1,0 +1,17 @@
+{
+    "name": "도전! 영양 골든벨",
+    "short_name": "영양골든벨",
+    "start_url": "index.html",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#10b981",
+    "description": "식생활 지식을 뽐내고 랭킹에 도전하는 게임",
+    "icons": [
+        {
+            "src": "icon.svg",
+            "sizes": "192x192 512x512",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        }
+    ]
+}

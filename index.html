@@ -4,6 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>춘양초등학교 식생활 골든벨</title>
+    
+    <!-- PWA 설정 (앱으로 설치 및 오프라인 구동) -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#10b981">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="영양골든벨">
+    <link rel="apple-touch-icon" href="icon.svg">
+
     <!-- 구글 폰트: 감자꽃체(Gamja Flower) & 고운돋움체(Gowun Dodum) 로드 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1637,6 +1646,21 @@
                       .replace(/>/g, '&gt;')
                       .replace(/"/g, '&quot;')
                       .replace(/'/g, '&#039;');
+        }
+    </script>
+
+    <!-- PWA 서비스워커 등록 스크립트 -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => {
+                        console.log('Service Worker 등록 완료:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker 등록 실패:', error);
+                    });
+            });
         }
     </script>
 </body>
